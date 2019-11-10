@@ -1,5 +1,7 @@
 import os
 import argparse
+import torch
+#torch._C._cuda_setDevice(-1)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--port", type=str, default="8097")

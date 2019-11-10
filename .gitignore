@@ -32,6 +32,8 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.t7
+*.weight
 MANIFEST
 
 # PyInstaller
