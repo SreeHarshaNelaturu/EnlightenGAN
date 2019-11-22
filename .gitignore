@@ -34,6 +34,7 @@ wheels/
 *.egg
 *.t7
 *.weight
+*.pth
 MANIFEST
 
 # PyInstaller
