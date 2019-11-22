@@ -12,13 +12,13 @@ class TestModel(BaseModel):
     def initialize(self, opt):
         assert(not opt.isTrain)
         BaseModel.initialize(self, opt)
-        self.input_A = self.Tensor(opt.batchSize, opt.input_nc, opt.fineSize, opt.fineSize)
+        self.input_A = self.Tensor(1, 3 , 3, 256)
 
-        self.netG = networks.define_G(opt.input_nc, opt.output_nc,
+        self.netG = networks.define_G(3, 3,
                                       opt.ngf, opt.which_model_netG,
-                                      opt.norm, not opt.no_dropout,
+                                      'instance', not opt.no_dropout,
                                       self.gpu_ids)
-        which_epoch = opt.which_epoch
+        which_epoch = 'latest'
         self.load_network(self.netG, 'G', which_epoch)
 
         print('---------- Networks initialized -------------')

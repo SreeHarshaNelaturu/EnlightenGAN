@@ -14,7 +14,7 @@ from lib.nn import SynchronizedBatchNorm2d as SynBN2d
 ###############################################################################
 
 def pad_tensor(input):
-    
+    print("bad", input.size())
     height_org, width_org = input.shape[2], input.shape[3]
     divide = 16
 
@@ -384,8 +384,8 @@ class UnetSkipConnectionBlock(nn.Module):
         downnorm = norm_layer(inner_nc)
         uprelu = nn.ReLU(True)
         upnorm = norm_layer(outer_nc)
-
-        if opt.use_norm == 0:
+        use_norm = 0
+        if use_norm == 0:
             if outermost:
                 upconv = nn.ConvTranspose2d(inner_nc * 2, outer_nc,
                                             kernel_size=4, stride=2,
@@ -718,14 +718,19 @@ class Unet_resize_conv(nn.Module):
 
     def forward(self, input, gray):
         flag = 0
+        
         if input.size()[3] > 2200:
             avg = nn.AvgPool2d(2)
             input = avg(input)
             gray = avg(gray)
             flag = 1
             # pass
+
+        print("huihui",input.size())
         input, pad_left, pad_right, pad_top, pad_bottom = pad_tensor(input)
+        print("Isee")
         gray, pad_left, pad_right, pad_top, pad_bottom = pad_tensor(gray)
+        print("Huzzah")
         if self.opt.self_attention:
             gray_2 = self.downsample_1(gray)
             gray_3 = self.downsample_2(gray_2)
@@ -1032,22 +1037,24 @@ class PerceptualLoss(nn.Module):
         else:
             return torch.mean((self.instancenorm(img_fea) - self.instancenorm(target_fea)) ** 2)
 
-def load_vgg16(model_dir, gpu_ids):
+def load_vgg16(weights, gpu_ids):
     """ Use the model from https://github.com/abhiskk/fast-neural-style/blob/master/neural_style/utils.py """
-    if not os.path.exists(model_dir):
+    """if not os.path.exists(model_dir):
         os.mkdir(model_dir)
     if not os.path.exists(os.path.join(model_dir, 'vgg16.weight')):
         if not os.path.exists(os.path.join(model_dir, 'vgg16.t7')):
             os.system('wget https://www.dropbox.com/s/76l3rt4kyi3s8x7/vgg16.t7?dl=1 -O ' + os.path.join(model_dir, 'vgg16.t7'))
         vgglua = load_lua(os.path.join(model_dir, 'vgg16.t7'))
+        vgglua = load_lua()
         vgg = Vgg16()
         for (src, dst) in zip(vgglua.parameters()[0], vgg.parameters()):
             dst.data[:] = src
         torch.save(vgg.state_dict(), os.path.join(model_dir, 'vgg16.weight'))
+    """
     vgg = Vgg16()
     # vgg.cuda()
     vgg.cuda(device=gpu_ids[0])
-    vgg.load_state_dict(torch.load(os.path.join(model_dir, 'vgg16.weight')))
+    vgg.load_state_dict(torch.load(weights))
     vgg = torch.nn.DataParallel(vgg, gpu_ids)
     return vgg
 

@@ -1,5 +1,5 @@
 
-def create_model(opt):
+def create_model(opt, checkpoint, vgg_file):
     model = None
     print(opt.model)
     if opt.model == 'cycle_gan':
@@ -18,7 +18,7 @@ def create_model(opt):
     elif opt.model == 'single':
         # assert(opt.dataset_mode == 'unaligned')
         from .single_model import SingleModel
-        model = SingleModel()
+        model = SingleModel(checkpoint, vgg_file)
     elif opt.model == 'temp':
         # assert(opt.dataset_mode == 'unaligned')
         from .temp_model import TempModel

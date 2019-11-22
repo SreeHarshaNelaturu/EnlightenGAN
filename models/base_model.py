@@ -6,12 +6,13 @@ class BaseModel():
     def name(self):
         return 'BaseModel'
 
-    def initialize(self, opt):
+    def initialize(self, opt, checkpoint, vgg_file):
         self.opt = opt
         self.gpu_ids = opt.gpu_ids
         self.isTrain = opt.isTrain
         self.Tensor = torch.cuda.FloatTensor if self.gpu_ids else torch.Tensor
         self.save_dir = os.path.join(opt.checkpoints_dir, opt.name)
+        self.vgg_weights = vgg_file
 
     def set_input(self, input):
         self.input = input
@@ -47,10 +48,10 @@ class BaseModel():
             network.cuda(device=gpu_ids[0])
 
     # helper loading function that can be used by subclasses
-    def load_network(self, network, network_label, epoch_label):
-        save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
-        save_path = os.path.join(self.save_dir, save_filename)
-        state_dict = torch.load(save_path)
+    def load_network(self, network, checkpoint):
+        #save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
+        #save_path = os.path.join(self.save_dir, save_filename)
+        state_dict = torch.load(checkpoint)
         new_state_dict = OrderedDict()
         for k, v in state_dict.items():
             name = k[7:] # remove `module.`

@@ -15,13 +15,12 @@ import random
 from . import networks
 import sys
 
-
 class SingleModel(BaseModel):
     def name(self):
         return 'SingleGANModel'
 
-    def initialize(self, opt):
-        BaseModel.initialize(self, opt)
+    def initialize(self, opt, checkpoint, vgg_file):
+        BaseModel.initialize(self, opt, checkpoint, vgg_file)
 
         nb = opt.batchSize
         size = opt.fineSize
@@ -30,6 +29,8 @@ class SingleModel(BaseModel):
         self.input_B = self.Tensor(nb, opt.output_nc, size, size)
         self.input_img = self.Tensor(nb, opt.input_nc, size, size)
         self.input_A_gray = self.Tensor(nb, 1, size, size)
+        self.vgg_weights = vgg_file
+        self.checkpoint = checkpoint
 
         if opt.vgg > 0:
             self.vgg_loss = networks.PerceptualLoss(opt)
@@ -37,7 +38,7 @@ class SingleModel(BaseModel):
                 self.vgg_patch_loss = networks.PerceptualLoss(opt)
                 self.vgg_patch_loss.cuda()
             self.vgg_loss.cuda()
-            self.vgg = networks.load_vgg16("./model", self.gpu_ids)
+            self.vgg = networks.load_vgg16(self.vgg_weights, self.gpu_ids)
             self.vgg.eval()
             for param in self.vgg.parameters():
                 param.requires_grad = False
@@ -68,13 +69,13 @@ class SingleModel(BaseModel):
                                             opt.which_model_netD,
                                             opt.n_layers_patchD, opt.norm, use_sigmoid, self.gpu_ids, True)
         if not self.isTrain or opt.continue_train:
-            which_epoch = opt.which_epoch
-            self.load_network(self.netG_A, 'G_A', which_epoch)
+            #hich_epoch = opt.which_epoch
+            self.load_network(self.netG_A, self.checkpoint)
             # self.load_network(self.netG_B, 'G_B', which_epoch)
-            if self.isTrain:
+            """if self.isTrain:
                 self.load_network(self.netD_A, 'D_A', which_epoch)
                 if self.opt.patchD:
-                    self.load_network(self.netD_P, 'D_P', which_epoch)
+                    self.load_network(self.netD_P, 'D_P', which_epoch)"""
 
         if self.isTrain:
             self.old_lr = opt.lr
@@ -116,15 +117,14 @@ class SingleModel(BaseModel):
 
     def set_input(self, input):
         AtoB = self.opt.which_direction == 'AtoB'
-        input_A = input['A' if AtoB else 'B']
-        input_B = input['B' if AtoB else 'A']
+        input_A = input['A']
+        input_B = input['B']
         input_img = input['input_img']
         input_A_gray = input['A_gray']
         self.input_A.resize_(input_A.size()).copy_(input_A)
         self.input_A_gray.resize_(input_A_gray.size()).copy_(input_A_gray)
         self.input_B.resize_(input_B.size()).copy_(input_B)
         self.input_img.resize_(input_img.size()).copy_(input_img)
-        self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
     
 
