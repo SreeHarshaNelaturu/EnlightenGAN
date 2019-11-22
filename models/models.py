@@ -18,7 +18,7 @@ def create_model(opt, checkpoint, vgg_file):
     elif opt.model == 'single':
         # assert(opt.dataset_mode == 'unaligned')
         from .single_model import SingleModel
-        model = SingleModel(checkpoint, vgg_file)
+        model = SingleModel(opt, checkpoint, vgg_file)
     elif opt.model == 'temp':
         # assert(opt.dataset_mode == 'unaligned')
         from .temp_model import TempModel

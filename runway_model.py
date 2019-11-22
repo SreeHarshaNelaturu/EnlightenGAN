@@ -2,7 +2,7 @@ import time
 import os
 from options.test_options import TestOptions
 from data.data_loader import CreateDataLoader
-from models.models import create_model
+from models.single_model import *
 from util.visualizer import Visualizer
 from pdb import set_trace as st
 from util import html
@@ -28,9 +28,10 @@ def setup(opts):
     opt.self_attention = True
     opt.times_residual = True
     opt.no_dropout = True
+    opt.isTrain = False
 
-    model = create_model(opt, checkpoint, vgg_weights)
-    #visualizer = Visualizer(opt)
+    model = SingleModel()
+    model.initialize(opt, checkpoint, vgg_weights)
 
     return {"model" : model,
             "opt" : opt}
@@ -42,6 +43,8 @@ command_outputs = {"output_image" : image}
 @runway.command("enlighten_image", inputs=command_inputs, outputs=command_outputs, description="Adjust lightining on image")
 def enlighten_image(model, inputs):
 
+    infer_model = model["model"]
+    
     transform = get_transform(model["opt"])
     A_img = inputs["input_image"].convert("RGB")
 
@@ -60,9 +63,9 @@ def enlighten_image(model, inputs):
 
     model["model"].set_input(img_dict)
 
-    visuals = model.predict()
-
-    return {"output_image" : visuals}
+    visuals = model["model"].predict()
+    
+    return {"output_image" : visuals["fake_B"]}
 
 
 

@@ -116,7 +116,7 @@ class SingleModel(BaseModel):
         print('-----------------------------------------------')
 
     def set_input(self, input):
-        AtoB = self.opt.which_direction == 'AtoB'
+        #AtoB = self.opt.which_direction == 'AtoB'
         input_A = input['A']
         input_B = input['B']
         input_img = input['input_img']

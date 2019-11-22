@@ -726,11 +726,8 @@ class Unet_resize_conv(nn.Module):
             flag = 1
             # pass
 
-        print("huihui",input.size())
         input, pad_left, pad_right, pad_top, pad_bottom = pad_tensor(input)
-        print("Isee")
         gray, pad_left, pad_right, pad_top, pad_bottom = pad_tensor(gray)
-        print("Huzzah")
         if self.opt.self_attention:
             gray_2 = self.downsample_1(gray)
             gray_3 = self.downsample_2(gray_2)
