@@ -3,9 +3,6 @@ import os
 from options.test_options import TestOptions
 from data.data_loader import CreateDataLoader
 from models.models import create_model
-from util.visualizer import Visualizer
-from pdb import set_trace as st
-from util import html
 from PIL import Image
 from data.base_dataset import get_transform
 import torch
