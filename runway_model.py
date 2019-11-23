@@ -1,11 +1,8 @@
 import time
 import os
 from options.test_options import TestOptions
-from data.data_loader import CreateDataLoader
 from models.single_model import *
 from util.visualizer import Visualizer
-from pdb import set_trace as st
-from util import html
 from PIL import Image
 from data.base_dataset import get_transform
 import torch
@@ -70,12 +67,4 @@ def enlighten_image(model, inputs):
 
 
 if __name__ == "__main__":
-    runway.run(model_options={"checkpoint" : "./weights.pth", "vgg_weights" : "./vgg16.weight"})
-
-    
-
-
-
-
-
-
+    runway.run()
