@@ -67,4 +67,4 @@ def enlighten_image(model, inputs):
 
 
 if __name__ == "__main__":
-    runway.run()
+    runway.run(model_options={"checkpoint":"weights.pth", "vgg_weights":"vgg16.weight"})

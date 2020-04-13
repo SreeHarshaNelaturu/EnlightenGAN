@@ -52,11 +52,7 @@ class BaseModel():
         #save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
         #save_path = os.path.join(self.save_dir, save_filename)
         state_dict = torch.load(checkpoint)
-        new_state_dict = OrderedDict()
-        for k, v in state_dict.items():
-            name = k[7:] # remove `module.`
-            new_state_dict[name] = v
-        network.load_state_dict(new_state_dict)
+        network.load_state_dict(state_dict)
 
     def update_learning_rate():
         pass
