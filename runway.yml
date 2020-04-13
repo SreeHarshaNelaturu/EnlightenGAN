@@ -5,5 +5,5 @@ spec:
   gpu: True
   cpu: True
 build_steps:
-  - pip install -r requirements.txt
   - conda install pytorch=0.3.1 torcvision cuda90 -c pytorch
+  - pip install -r requirements.txt
